@@ -328,7 +328,6 @@ public class MainActivity extends AppCompatActivity implements OnShareListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         ShareKeeper.getInstance().performQQOrNativeShareResult(requestCode, resultCode, data);
-        Log.e("TAG", "分享code：" + requestCode);
     }
 
     @Override
