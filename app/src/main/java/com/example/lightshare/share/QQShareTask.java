@@ -133,13 +133,20 @@ public class QQShareTask {
      */
     private static void performQQShareTxt(Activity activity, ShareKeeper.Builder builder) {
         //关于QQ纯文本分享的要单独处理
-        Intent intent = new Intent("android.intent.action.SEND");
+        OnShareListener mOnShareListener = builder.mOnShareListener;
+        Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType(NetiveShareTask.TYPE_TXT);
         intent.putExtra(Intent.EXTRA_SUBJECT, "分享");
         intent.putExtra(Intent.EXTRA_TEXT, builder.mDesc + "");//不能为空
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setComponent(new ComponentName(QQ_PACKAGE_NAME, QQ_SHARE_COMPONENT_NAME));
-        activity.startActivityForResult(intent, NetiveShareTask.SHARE_REQUEST_CODE);
+        if (intent.resolveActivity(activity.getPackageManager()) != null) {
+            activity.startActivityForResult(intent, NetiveShareTask.SHARE_REQUEST_CODE);
+        } else {
+            if (mOnShareListener != null) {
+                mOnShareListener.onShareFailed(builder.mPlatform, builder.mShareType, "分享所在Activity异常!");
+            }
+        }
     }
 
     /**
