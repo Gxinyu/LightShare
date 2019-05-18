@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+
 import com.example.lightshare.share.OnShareListener;
 import com.example.lightshare.share.QQShareTask;
 import com.example.lightshare.share.ShareKeeper;
@@ -38,6 +39,12 @@ public class MainActivity extends AppCompatActivity implements OnShareListener {
                 ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, 1);
             }
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        ShareKeeper.getInstance().performWBShareResult(intent);
     }
 
     /**
@@ -105,27 +112,6 @@ public class MainActivity extends AppCompatActivity implements OnShareListener {
                 .setImageUrl(imageUrl)
                 .setOnShareListener(this)
                 .share();
-    }
-
-    /**
-     * 分享QQ网页视频
-     *
-     * @param view
-     */
-    public void qqWebVideo(View view) {
-        QQShareTask.mShareWithSDK = true;
-        ShareKeeper.getInstance()
-                .builder(this)
-                .setPlatform(ShareKeeper.PLATFORM_QQ)
-                .setShareType(ShareKeeper.TYPE_AVDIO)
-                .setTitle(title)
-                .setDesc(desc)
-                .setImageUrl(imageUrl)
-                .setWebUrl(webUrl)
-                .setAVdioUrl(videoUrl)
-                .setOnShareListener(this)
-                .share();
-
     }
 
     /**
@@ -255,6 +241,90 @@ public class MainActivity extends AppCompatActivity implements OnShareListener {
 
 
     /**
+     * ++++++++++++++++++++++++++++++++++++++++++++++++++++微博分享+++++++++++++++++++++++++++++++++++++
+     * ++++++++++++++++++++++++++++++++++++++++++++++++++++++微博分享+++++++++++++++++++++++++++++++++++
+     *
+     * @param view
+     */
+    public void wbDefault(View view) {
+        ShareKeeper.getInstance()
+                .builder(this)
+                .setPlatform(ShareKeeper.PLATFORM_WEIBO)
+                .setShareType(ShareKeeper.TYPE_DEFAULT)
+                .setTitle(title)
+                .setDesc(desc)
+                .setImageUrl(imageUrl)
+                .setWebUrl(webUrl)
+                .setOnShareListener(this)
+                .share();
+    }
+
+    /**
+     * 微博分享纯文本
+     *
+     * @param view
+     */
+    public void wbTxt(View view) {
+        ShareKeeper.getInstance()
+                .builder(this)
+                .setPlatform(ShareKeeper.PLATFORM_WEIBO)
+                .setShareType(ShareKeeper.TYPE_TXT)
+                .setDesc(desc)
+                .setOnShareListener(this)
+                .share();
+    }
+
+    /**
+     * 微博分享网页视频
+     *
+     * @param view
+     */
+    public void wbVideo(View view) {
+        ShareKeeper.getInstance()
+                .builder(this)
+                .setPlatform(ShareKeeper.PLATFORM_WEIBO)
+                .setShareType(ShareKeeper.TYPE_AVDIO)
+                .setTitle(title)
+                .setDesc(desc)
+                .setImageUrl(imageUrl)
+                .setWebUrl(videoUrl)
+                .setOnShareListener(this)
+                .share();
+
+    }
+
+    /**
+     * 微博分享本地图片
+     *
+     * @param view
+     */
+    public void wbLocalPic(View view) {
+        ShareKeeper.getInstance()
+                .builder(this)
+                .setPlatform(ShareKeeper.PLATFORM_WEIBO)
+                .setShareType(ShareKeeper.TYPE_PICTURE)
+                .setImagePath(localPicPath)
+                .setOnShareListener(this)
+                .share();
+    }
+
+    /**
+     * 微博分享网络图片
+     *
+     * @param view
+     */
+    public void wbNetPic(View view) {
+        ShareKeeper.getInstance()
+                .builder(this)
+                .setPlatform(ShareKeeper.PLATFORM_WEIBO)
+                .setShareType(ShareKeeper.TYPE_PICTURE)
+                .setImageUrl(imageUrl)
+                .setOnShareListener(this)
+                .share();
+    }
+
+
+    /**
      * 原生
      * ++++++++++++++++++++++++++++++++++++++++++++++++++++原生分享+++++++++++++++++++++++++++++++++++++
      * ++++++++++++++++++++++++++++++++++++++++++++++++++++++原生分享+++++++++++++++++++++++++++++++++++
@@ -349,5 +419,7 @@ public class MainActivity extends AppCompatActivity implements OnShareListener {
     protected void onDestroy() {
         ShareKeeper.getInstance().onDestory();
         super.onDestroy();
+
+
     }
 }

@@ -44,7 +44,7 @@ public class WXShareTask {
         OnShareListener mOnShareListener = builder.mOnShareListener;
         //监测是否有客户端
         if (!weixinAvilible) {
-            mOnShareListener.onShareFailed(builder.mPlatform, builder.mShareType,"监测不到客户端");
+            mOnShareListener.onShareFailed(builder.mPlatform, builder.mShareType,"未检测到客户端");
         } else {
             final IWXAPI wxApi = WXAPIFactory.createWXAPI(activity, Config.WECHAT_APP_ID);
             wxApi.registerApp(Config.WECHAT_APP_ID);

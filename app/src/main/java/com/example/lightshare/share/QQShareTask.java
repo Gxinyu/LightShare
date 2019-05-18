@@ -47,7 +47,7 @@ public class QQShareTask {
         OnShareListener mOnShareListener = builder.mOnShareListener;
         //监测是否有客户端
         if (!qqClientAvailable) {
-            mOnShareListener.onShareFailed(builder.mPlatform, builder.mShareType, "客户端未安装");
+            mOnShareListener.onShareFailed(builder.mPlatform, builder.mShareType, "未检测到客户端");
         } else {
             //使用application的context初始化实例化
             final Tencent mTencent = Tencent.createInstance(Config.TENCENT_APP_ID, activity.getApplicationContext());

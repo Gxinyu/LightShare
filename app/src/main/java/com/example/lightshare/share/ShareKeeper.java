@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.IntDef;
 
+import com.sina.weibo.sdk.share.WbShareCallback;
+import com.sina.weibo.sdk.share.WbShareHandler;
 import com.tencent.connect.common.Constants;
 import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.tauth.IUiListener;
@@ -26,7 +28,8 @@ public class ShareKeeper {
     public static final int PLATFORM_QZONE = 2;
     public static final int PLATFORM_WECHAT = 3;
     public static final int PLATFORM_WECHAT_MOMENTS = 4;
-    public static final int PLATFORM_NATIVE = 5;
+    public static final int PLATFORM_WEIBO = 5;
+    public static final int PLATFORM_NATIVE = 6;
 
     //四种类型
     public static final int TYPE_DEFAULT = 100;//默认
@@ -34,8 +37,7 @@ public class ShareKeeper {
     public static final int TYPE_PICTURE = 102;//图片
     public static final int TYPE_AVDIO = 103;//音视频
 
-
-    @IntDef({PLATFORM_QQ, PLATFORM_QZONE, PLATFORM_WECHAT, PLATFORM_WECHAT_MOMENTS, PLATFORM_NATIVE})
+    @IntDef({PLATFORM_QQ, PLATFORM_QZONE, PLATFORM_WECHAT, PLATFORM_WECHAT_MOMENTS, PLATFORM_WEIBO, PLATFORM_NATIVE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Platform {
     }
@@ -257,9 +259,13 @@ public class ShareKeeper {
         } else if (mPlatform == PLATFORM_WECHAT
                 || mPlatform == PLATFORM_WECHAT_MOMENTS) {
             WXShareTask.executeShare(activity, builder);
+        } else if (mPlatform == PLATFORM_WEIBO) {
+            WBShareTask.executeShare(activity, builder);
         } else if (mPlatform == PLATFORM_NATIVE) {
             NetiveShareTask.executeShare(activity, builder);
         }
+
+
     }
 
     /**
@@ -323,12 +329,49 @@ public class ShareKeeper {
     }
 
     /**
+     * 处理微博的分享监听
+     *
+     * @param intent
+     */
+    public void performWBShareResult(Intent intent) {
+        WbShareHandler wbShareHandler = WBShareTask.getWbShareHandler();
+        if (wbShareHandler != null) {
+            if (mShareBuilder != null) {
+                final int mPlatform = mShareBuilder.mPlatform;
+                final int mShareType = mShareBuilder.mShareType;
+                final OnShareListener mOnShareListener = mShareBuilder.mOnShareListener;
+                if (mOnShareListener != null) {
+                    wbShareHandler.doResultIntent(intent, new WbShareCallback() {
+                        @Override
+                        public void onWbShareSuccess() {
+                            mOnShareListener.onShareSuccess(mPlatform, mShareType);
+                        }
+
+                        @Override
+                        public void onWbShareCancel() {
+                            mOnShareListener.onCancleShare(mPlatform, mShareType, "取消分享!");
+                        }
+
+                        @Override
+                        public void onWbShareFail() {
+                            mOnShareListener.onShareFailed(mPlatform, mShareType, "分享失败!");
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+
+    /**
      * 处理当前activity销毁的时候回调
      */
     public void onDestory() {
         if (mShareBuilder != null) {
             mShareBuilder = null;
         }
+
+        WBShareTask.onDestory();
         QQShareTask.onDestory();
     }
 }

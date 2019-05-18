@@ -47,6 +47,16 @@ public class BitmpUtils {
     }
 
     /**
+     * 字节转bitmap
+     *
+     * @param bytes
+     * @return
+     */
+    public static Bitmap byteToBitmap(byte[] bytes) {
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+    }
+
+    /**
      * 网络图片转为bitmap
      *
      * @param url
